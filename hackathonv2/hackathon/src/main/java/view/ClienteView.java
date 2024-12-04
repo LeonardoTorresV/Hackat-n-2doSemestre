@@ -1,5 +1,6 @@
 package view;
 
+import db.Conexion;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -291,7 +292,7 @@ public class ClienteView extends javax.swing.JFrame {
                 btnLimpiarActionPerformed(evt);
             }
         });
-        
+
         System.out.println(System.getProperty("java.class.path"));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -494,22 +495,29 @@ public class ClienteView extends javax.swing.JFrame {
         String apellidos = jTxtApellidos.getText();
         String direccion = jTextAreaDireccion.getText();
         String celular = jTxtCelular.getText();
-        if (jRadioMasculino.isSelected()) {
-            sexo = "M";
-        } else {
+        String sexo = "";
+        if (jRadioFemenino.isSelected()) {
             sexo = "F";
+        } else if (jRadioMasculino.isSelected()) {
+            sexo = "M";
         }
-        try {
-            String sql = "INSERT INTO CLIENTE(DNI, NOMBRES, APELLIDOS, DIRECCION, CELULAR, SEXO) values('" + dni + "','" + nombres + "','" + apellidos + "','" + direccion + "','" + celular + "','" + sexo + "')";
-            con = conexion.Conexion();
-            st = con.createStatement();
-            st.executeUpdate(sql);
-            JOptionPane.showMessageDialog(this, "Cliente Registrado con Exito");
-            limpiarTabla(model);
-        } catch (Exception e) {
-            System.out.println("Error Registrar " + e);
+
+        if (dni.equals("") || nombres.equals("") || apellidos.equals("") || direccion.equals("") || celular.equals("") || sexo.equals("")) {
+            JOptionPane.showMessageDialog(null, "Faltan Valores");
+            limpiar();
+        } else {
+            try {
+                String sql = "INSERT INTO CLIENTE(DNI, NOMBRES, APELLIDOS, DIRECCION, CELULAR, SEXO) values('" + dni + "','" + nombres + "','" + apellidos + "','" + direccion + "','" + celular + "','" + sexo + "')";
+                con = conexion.Conexion();
+                st = con.createStatement();
+                st.executeUpdate(sql);
+                JOptionPane.showMessageDialog(this, "Cliente Registrado con Exito");
+
+            } catch (Exception e) {
+                System.out.println("Error Registrar " + e);
+            }
         }
-        limpiar();
+        limpiarTabla(model);
     }
 
     void editar() {
@@ -518,28 +526,36 @@ public class ClienteView extends javax.swing.JFrame {
         String apellidos = jTxtApellidos.getText();
         String direccion = jTextAreaDireccion.getText();
         String celular = jTxtCelular.getText();
-        if (jRadioMasculino.isSelected()) {
-            sexo = "M";
-        } else {
+        String sexo = "";
+        if (jRadioFemenino.isSelected()) {
             sexo = "F";
+        } else if (jRadioMasculino.isSelected()) {
+            sexo = "M";
         }
-        try {
-            String sql = "UPDATE CLIENTE SET DNI='" + dni + "', NOMBRES='" + nombres + "', APELLIDOS='" + apellidos + "', DIRECCION='" + direccion + "', CELULAR='" + celular + "', SEXO='" + sexo + "' WHERE ID=" + id;
-            con = conexion.Conexion();
-            st = con.createStatement();
-            st.executeUpdate(sql);
-            JOptionPane.showMessageDialog(this, "Cliente Actualizado con Exito");
-            limpiarTabla(model);
-        } catch (Exception e) {
-            System.out.println("Error Editar " + e);
+
+        if (dni.equals("") || nombres.equals("") || apellidos.equals("") || direccion.equals("") || celular.equals("") || sexo.equals("")) {
+            JOptionPane.showMessageDialog(null, "Faltan Valores");
+            limpiar();
+        } else {
+            try {
+                String sql = "UPDATE CLIENTE SET DNI='" + dni + "', NOMBRES='" + nombres + "', APELLIDOS='" + apellidos + "', DIRECCION='" + direccion + "', CELULAR='" + celular + "', SEXO='" + sexo + "' WHERE ID=" + id;
+                con = conexion.Conexion();
+                st = con.createStatement();
+                st.executeUpdate(sql);
+                JOptionPane.showMessageDialog(this, "Cliente Actualizado con Exito");
+                limpiarTabla(model);
+            } catch (Exception e) {
+                System.out.println("Error Editar " + e);
+            }
         }
-        limpiar();
+        limpiarTabla(model);
     }
 
     void eliminar() {
         String sql = "DELETE FROM CLIENTE WHERE ID=" + id;
         int fila = TablaDatos.getSelectedRow();
         if (fila < 0) {
+            JOptionPane.showMessageDialog(this, "Cliente No seleccionado");
             System.out.println("Cliente no Seleccionado");
         } else {
             try {
@@ -553,6 +569,7 @@ public class ClienteView extends javax.swing.JFrame {
             }
         }
         limpiar();
+        limpiarTabla(model);
     }
 
     void limpiarTabla(DefaultTableModel model) {
